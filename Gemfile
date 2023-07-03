@@ -6,6 +6,12 @@ ruby "3.0.0"
 # Bundle edge Rails instead: gem "rails", github: "rails/rails", branch: "main"
 gem "rails", "~> 7.0.6"
 
+gem "rack-cors"
+gem "devise", "~> 4.9"
+gem "devise-jwt", "~> 0.9.0"
+gem 'warden-jwt_auth', '~> 0.6.0'
+gem 'kaminari'
+
 # The original asset pipeline for Rails [https://github.com/rails/sprockets-rails]
 gem "sprockets-rails"
 
