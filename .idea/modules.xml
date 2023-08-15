@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/rails-postgresql-render.iml" filepath="$PROJECT_DIR$/.idea/rails-postgresql-render.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/meepo-backend.iml" filepath="$PROJECT_DIR$/.idea/meepo-backend.iml" />
     </modules>
   </component>
 </project>

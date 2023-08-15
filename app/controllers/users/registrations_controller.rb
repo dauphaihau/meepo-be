@@ -1,12 +1,18 @@
 class Users::RegistrationsController < Devise::RegistrationsController
-  skip_before_action :verify_authenticity_token
   respond_to :json
 
   private
 
+  def sign_up_params
+    params.require(:user).permit(:name, :email, :username, :password, :dob)
+  end
+
+  def account_update_params
+    params.require(:user).permit(:name, :email, :username, :password, :dob)
+  end
+
   def respond_with(resource, _opts = {})
     register_success && return if resource.persisted?
-
     register_failed
   end
 
@@ -18,6 +24,17 @@ class Users::RegistrationsController < Devise::RegistrationsController
   end
 
   def register_failed
-    render json: { message: 'Something went wrong.' }, status: :unprocessable_entity
+    @user_un = User.find_by_username(sign_up_params[:username])
+    @user_e = User.find_by_email(sign_up_params[:email])
+    message = ''
+    message = 'username' if @user_un
+    message = 'email' if @user_e
+    message = 'username, email' if @user_e && @user_un
+
+    if message
+      render json: { message: 'Duplicate ' + message }, status: :conflict
+    else
+      render json: { message: 'Something went wrong.' }, status: :unprocessable_entity
+    end
   end
 end

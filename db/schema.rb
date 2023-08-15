@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2023_07_04_121420) do
+ActiveRecord::Schema[7.0].define(version: 2023_08_11_141343) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -23,10 +23,16 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_04_121420) do
   end
 
   create_table "posts", force: :cascade do |t|
-    t.string "title"
-    t.text "body"
+    t.text "content"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.integer "pin_status", default: 0
+    t.integer "who_can_comment", default: 0
+    t.integer "sub_posts_count"
+    t.integer "parent_id"
+    t.string "image_url"
+    t.integer "likes_count"
+    t.integer "user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -38,7 +44,13 @@ ActiveRecord::Schema[7.0].define(version: 2023_07_04_121420) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.string "username"
-    t.string "name"
+    t.string "name", limit: 50
+    t.string "avatar_url", limit: 200
+    t.string "bio", limit: 160
+    t.string "website", limit: 100
+    t.string "location", limit: 30
+    t.integer "posts_count"
+    t.datetime "dob"
     t.index ["email"], name: "index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
   end

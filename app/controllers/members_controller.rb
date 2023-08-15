@@ -1,11 +1,6 @@
 class MembersController < ApplicationController
   before_action :authenticate_user!
 
-  def list
-    @users = User.where(nil).order(created_at: :desc)
-    render json: @users
-  end
-
   def show
     user = get_user_from_token
 
