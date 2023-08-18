@@ -22,6 +22,7 @@ gem "turbo-rails"
 gem "stimulus-rails"
 gem "jbuilder"
 gem "tzinfo-data", platforms: %i[ mingw mswin x64_mingw jruby ]
+gem "redis", "~> 5.0"
 
 gem "bootsnap", require: false
 
