@@ -9,4 +9,10 @@ class User < ApplicationRecord
   has_many :posts
   validates_uniqueness_of :username, :email
   validates_presence_of :name, :email, :username, :encrypted_password
+  enum search_types: { default: 0, unfollow_current_user: 1, following_by_username: 2, followers_by_username: 3 }
+
+  scope :filter_by_username_name, -> (valueSearch) {
+    where('username like ?', "%#{valueSearch}%") if valueSearch
+  }
+  scope :limit_by, ->(type) { all.limit(10) if type.to_i == User.search_types[:unfollow_current_user] }
 end
