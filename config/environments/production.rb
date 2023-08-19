@@ -43,13 +43,10 @@ Rails.application.configure do
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
-  #
+  config.web_socket_server_url = "wss://meepo-app.onrender.com/cable"
   config.action_cable.url = "wss://meepo-app.onrender.com/cable"
   config.action_cable.mount_path = '/cable'
-  # config.action_cable.allowed_request_origins = ['https://meepo-app.onrender.com', 'https://www.meepo-app.onrender.com']
-  config.action_cable.allowed_request_origins = [/https:\/\/.*/]
-
-  # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
+  config.action_cable.allowed_request_origins = ['https://meepo-app.onrender.com', 'https://www.meepo-app.onrender.com']
   # config.force_ssl = true
 
   # Include generic and useful information about system operation, but avoid logging too much
