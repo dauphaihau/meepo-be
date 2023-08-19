@@ -47,6 +47,7 @@ Rails.application.configure do
   config.action_cable.url = "wss://meepo-app.onrender.com/cable"
   config.action_cable.mount_path = '/cable'
   config.action_cable.allowed_request_origins = ['https://meepo-app.onrender.com']
+  config.action_cable.disable_request_forgery_protection = true
   # config.force_ssl = true
 
   # Include generic and useful information about system operation, but avoid logging too much
