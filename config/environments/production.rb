@@ -46,7 +46,8 @@ Rails.application.configure do
   #
   config.action_cable.url = "wss://meepo-app.onrender.com/cable"
   config.action_cable.mount_path = '/cable'
-  config.action_cable.allowed_request_origins = ['https://meepo-app.onrender.com', 'https://meepo-app.onrender.com']
+  # config.action_cable.allowed_request_origins = ['https://meepo-app.onrender.com', 'https://www.meepo-app.onrender.com']
+  config.action_cable.allowed_request_origins = [/https:\/\/.*/]
 
   # Force all access to the app over SSL, use Strict-Transport-Security, and use secure cookies.
   # config.force_ssl = true
