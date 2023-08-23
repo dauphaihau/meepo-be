@@ -13,10 +13,10 @@ class PostsController < ApplicationController
     posts = Post
               .joins(:user)
               .select(select_string)
-              .filter_by(params[:by], current_user, params[:user_id], params[:username])
-              .filter_by_parent_id(params[:parent_id])
+              .filter_by(params[:by], params[:user_id], params[:username], current_user)
+              .filter_by_parent_id(params[:parent_id], params[:by])
               .order_by(params[:by], params[:pin_status])
-              .page params[:page]
+              .page(params[:page]).per(params[:limit])
 
     if current_user
       arr_post_id_liked = Like
@@ -33,7 +33,14 @@ class PostsController < ApplicationController
       end
     end
 
-    render json: posts
+    render json: {
+      posts: posts
+    }
+
+    # rescue ActiveRecord::NoMethodError => e
+    # render json: {
+    #   error: e.to_s
+    # }, status: :bad_request
   end
 
   # GET /posts/1 or /posts/1.json

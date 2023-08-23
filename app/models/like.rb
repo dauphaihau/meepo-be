@@ -7,7 +7,6 @@ class Like < ApplicationRecord
   def broadcast_message
     if post_id
       post = Post.find(post_id)
-      puts post
       ActionCable.server.broadcast('PostsChannel', { id: id, post_id: post_id, post: post })
     end
   end
