@@ -20,8 +20,8 @@ class User < ApplicationRecord
 
   enum by: { default: 0, unfollow_current_user: 1, followers_by_username: 2, following_by_username: 3 }
 
-  scope :filter_by_username_name, -> (valueSearch) {
-    where('username like ?', "%#{valueSearch}%") if valueSearch
+  scope :filter_by_username_name, -> (search) {
+    where('username LIKE :search OR name LIKE :search', search: "%#{search}%") if search
   }
 
   scope :filter_by_follow, -> (current_user, by, username) {

@@ -15,4 +15,5 @@ Rails.application.routes.draw do
   resources :hashtags
   post '/posts/likes', to: 'likes#create'
 
+  resources :search
 end

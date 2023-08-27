@@ -16,6 +16,11 @@ class Post < ApplicationRecord
     return if by.to_i === Post.bies[:comments]
     where(posts: { parent_id: parent_id ? parent_id : nil })
   }
+  scope :filter_by_content, -> (search) { where('content like ?', "%#{search}%") if search }
+  scope :filter_content_include_user, -> (query) {
+    return if query.nil?
+    where('posts.content LIKE :q OR users.username LIKE :q OR users.name LIKE :q', q: "%#{query}%")
+  }
 
   scope :filter_by, -> (by, user_id, username, current_user) {
 

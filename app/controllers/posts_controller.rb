@@ -5,8 +5,9 @@ class PostsController < ApplicationController
 
   # GET /posts or /posts.json
   def index
+    # users.id as author_user_id
     select_string = "
-      users.username as author_username, users.name as author_name, users.avatar_url as author_avatar,
+      users.username as author_username, users.name as author_name, users.avatar_url as author_avatar_url, users.bio as author_bio,
       posts.*, posts.pin_status as pin_status_int, posts.who_can_comment as who_can_comment_int
     "
 
@@ -24,7 +25,17 @@ class PostsController < ApplicationController
                             .pluck(:post_id)
 
       posts = posts.map do |p|
-        p.attributes.merge({ :is_current_user_like => arr_post_id_liked.include?(p.id) })
+
+        followed_count = Follow.where(follower_id: p.user_id).size
+        followers_count = Follow.where(followed_id: p.user_id).size
+        is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: p.user_id).first
+
+        p.attributes.merge({
+                             is_current_user_like: arr_post_id_liked.include?(p.id),
+                             author_followed_count: followed_count,
+                             author_followers_count: followers_count,
+                             is_current_user_following: is_current_user_following,
+                           })
       end
 
     else
@@ -57,6 +68,11 @@ class PostsController < ApplicationController
         is_current_user_like: like.present?,
         is_current_user_can_comment: true,
       }
+
+      if Post.who_can_comments[@post.who_can_comment] == Post.who_can_comments[:followed] && @post.user_id != current_user.id
+        follow = Follow.where(follower_id: @post.user_id, followed_id: current_user.id)
+        response['is_current_user_can_comment'] = follow.present?
+      end
 
       render json: {
         post: @post.attributes.merge(response),

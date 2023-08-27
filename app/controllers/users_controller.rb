@@ -4,17 +4,21 @@ class UsersController < ApplicationController
   respond_to :json
 
   def index
-    # users = User.where('username = ? or name = ?', params[:p], params[:p])
-
     users = User.limit_by(params[:by])
                 .select(:id, :username, :name, :avatar_url, :bio)
                 .filter_by_follow(current_user, params[:by], params[:username])
-                .filter_by_username_name(params[:q])
+                # .filter_by_username_name(params[:q])
 
     if current_user && (User.bies[:followers_by_username] == params[:by].to_i || User.bies[:following_by_username] == params[:by].to_i)
       followed_id = Follow.where(follower_id: current_user.id, followed_id: users.map(&:id)).pluck :followed_id
       users = users.map do |user|
-        user.attributes.merge({ :is_current_user_following => followed_id.include?(user.id) })
+
+        # user.attributes.merge({ :is_current_user_following => followed_id.include?(user.id) })
+        user.attributes.merge({
+                                is_current_user_following: followed_id.include?(user.id),
+                                followed_count: user.followings.size,
+                                followers_count: user.followers.size,
+                              })
       end
 
     end
@@ -55,7 +59,7 @@ class UsersController < ApplicationController
   # PATCH/PUT /users/1 or /users/1.json
   def update
     if current_user.update(user_params)
-      render json: {user: current_user}, status: :ok
+      render json: { user: current_user }, status: :ok
     else
       render json: current_user.errors, status: :unprocessable_entity
     end
