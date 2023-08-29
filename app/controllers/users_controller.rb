@@ -7,53 +7,48 @@ class UsersController < ApplicationController
     users = User.limit_by(params[:by])
                 .select(:id, :username, :name, :avatar_url, :bio)
                 .filter_by_follow(current_user, params[:by], params[:username])
-                # .filter_by_username_name(params[:q])
+    # .filter_by_username_name(params[:q])
 
-    if current_user && (User.bies[:followers_by_username] == params[:by].to_i || User.bies[:following_by_username] == params[:by].to_i)
-      followed_id = Follow.where(follower_id: current_user.id, followed_id: users.map(&:id)).pluck :followed_id
-      users = users.map do |user|
+    by = params[:by].to_i
 
-        # user.attributes.merge({ :is_current_user_following => followed_id.include?(user.id) })
-        user.attributes.merge({
-                                is_current_user_following: followed_id.include?(user.id),
-                                followed_count: user.followings.size,
-                                followers_count: user.followers.size,
-                              })
+    users = users.map do |user|
+      hash = {
+        followed_count: user.followings.size,
+        followers_count: user.followers.size
+      }
+      if current_user && (User.bies[:followers_by_username] == by || User.bies[:following_by_username] == by)
+        followed_ids = Follow.where(follower_id: current_user.id, followed_id: users.map(&:id)).pluck :followed_id
+        hash['is_current_user_following'] = followed_ids.include?(user.id)
       end
 
+      user = hash.merge(user.as_json)
+      user
     end
+
+    response = { users: users }
 
     if params[:include] === 'user'
-      render json: {
-        by_user: User.find_by_username(params[:username]),
-        users: users,
-      }
-      return
+      response['by_user'] = User.find_by_username(params[:username])
     end
 
-    render json: {
-      users: users
-    }
+    render json: response
   end
 
   # GET /users/1 or /users/1.json
   def show
-    followed_count = Follow.where(follower_id: @user.id).count
-    followers_count = Follow.where(followed_id: @user.id).size
+
+    hash = {
+      followed_count: @user.followings.size,
+      followers_count: @user.followers.size,
+    }
 
     if current_user
-      @is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: @user.id).first
+      is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: @user.id).first
+      hash['is_current_user_following'] = !is_current_user_following.nil?
     end
 
-    render json: {
-      user: @user
-              .attributes
-              .merge({
-                       followed_count: followed_count,
-                       followers_count: followers_count,
-                       is_current_user_following: !@is_current_user_following.nil?,
-                     })
-    }, status: :ok
+    user = hash.merge(@user.as_json)
+    render json: { user: user }, status: :ok
   end
 
   # PATCH/PUT /users/1 or /users/1.json

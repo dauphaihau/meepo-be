@@ -32,6 +32,14 @@ class SearchController < ApplicationController
                       .uniq
           # .page(params[:page]).per(params[:limit])
 
+          # posts = Post.joins(:user)
+          #             .select(select_string)
+          #             .filter_content_include_user(params[:q])
+          #             .group("posts.id, users.id")
+          #             .order('likes_count desc')
+          #             .uniq
+          # .page(params[:page]).per(params[:limit])
+
         when filters[:latest]
 
           posts = Post.joins(:user)
@@ -55,27 +63,50 @@ class SearchController < ApplicationController
           p 'else'
         end
 
+        followed_ids = []
         if current_user
+          followed_ids = Follow.where(follower_id: current_user.id, followed_id: users.map(&:id)).pluck :followed_id if current_user
+        end
 
-          if users.length > 0
-            followed_id = Follow.where(follower_id: current_user.id, followed_id: users.map(&:id)).pluck :followed_id
-            users = users.map do |user|
-              user.attributes.merge({
-                                      is_current_user_following: followed_id.include?(user.id),
-                                      followed_count: user.followings.size,
-                                      followers_count: user.followers.size,
-                                    })
-            end
+        if users && users.length > 0
+          users = users.map do |user|
+            hash = {
+              followed_count: user.followings.size,
+              followers_count: user.followers.size
+            }
+            hash['is_current_user_following'] = followed_ids.include?(user.id) if current_user
+            user = hash.merge(user.as_json)
+            user.delete('by')
+            user
           end
+        end
 
-          if posts.length > 0
+        if posts && posts.length > 0
+          arr_post_id_liked = []
+          if current_user
             arr_post_id_liked = Like
                                   .where(post_id: posts.map(&:id), user_id: current_user.id)
                                   .pluck(:post_id)
+          end
 
-            posts = posts.map do |p|
-              p.attributes.merge({ is_current_user_like: arr_post_id_liked.include?(p.id) })
+          posts = posts.map do |post|
+            user = User.find(post.user_id)
+            hash = {
+              author_followed_count: user.followings.size,
+              author_followers_count: user.followers.size,
+            }
+
+            if current_user
+              is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: post.user_id).first
+              hash['is_current_user_like'] = arr_post_id_liked.include?(post.id)
+              hash['is_current_user_following'] = is_current_user_following.present?
             end
+
+            post = post.as_json.merge(hash)
+            post.delete('by')
+            post.delete('who_can_comment')
+            post.delete('pin_status')
+            post
           end
         end
 
@@ -85,13 +116,13 @@ class SearchController < ApplicationController
       end
 
     else
-      hashtags = Hashtag.select([:text]).group(:text).having("count(text) > 1").all.size
-      hashtags_sorted = hashtags.sort_by(&:last).reverse[0, 5]
-
-      hashtags_sorted.each do |p|
-        hashtag = p[0]
-        posts_trending << Post.filter_by_content(hashtag).order(created_at: :desc).first
-      end
+      # hashtags = Hashtag.select([:text]).group(:text).having("count(text) > 1").all.size
+      # hashtags_sorted = hashtags.sort_by(&:last).reverse[0, 5]
+      #
+      # hashtags_sorted.each do |p|
+      #   hashtag = p[0]
+      #   posts_trending << Post.filter_by_content(hashtag).order(created_at: :desc).first
+      # end
     end
 
     render json: {

@@ -1,7 +1,7 @@
 class Post < ApplicationRecord
   belongs_to :user, counter_cache: true
-  has_many :likes, foreign_key: 'post_id'
-  has_many :hashtags, foreign_key: 'post_id'
+  has_many :likes, foreign_key: 'post_id', dependent: :destroy
+  has_many :hashtags, foreign_key: 'post_id',dependent: :destroy
 
   has_many :sub_posts, dependent: :destroy, class_name: 'Post', foreign_key: 'parent_id', inverse_of: :parent
   belongs_to :parent, optional: true, class_name: 'Post', inverse_of: :sub_posts, counter_cache: :sub_posts_count

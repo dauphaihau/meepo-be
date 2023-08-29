@@ -1,51 +1,59 @@
 class PostsController < ApplicationController
   before_action :set_post, only: %i[ show edit update destroy ]
+  before_action :set_select_string, only: %i[ show index ]
   before_action :authenticate_user!, except: [:index, :show]
   respond_to :json
 
   # GET /posts or /posts.json
   def index
     # users.id as author_user_id
-    select_string = "
-      users.username as author_username, users.name as author_name, users.avatar_url as author_avatar_url, users.bio as author_bio,
-      posts.*, posts.pin_status as pin_status_int, posts.who_can_comment as who_can_comment_int
-    "
 
     posts = Post
               .joins(:user)
-              .select(select_string)
+              .select(@select_string)
               .filter_by(params[:by], params[:user_id], params[:username], current_user)
               .filter_by_parent_id(params[:parent_id], params[:by])
               .order_by(params[:by], params[:pin_status])
               .page(params[:page]).per(params[:limit])
 
+    arr_post_id_liked = []
     if current_user
       arr_post_id_liked = Like
                             .where(post_id: posts.map(&:id), user_id: current_user.id)
                             .pluck(:post_id)
+    end
 
-      posts = posts.map do |p|
+    posts = posts.map do |post|
+      user = User.find(post.user_id)
 
-        followed_count = Follow.where(follower_id: p.user_id).size
-        followers_count = Follow.where(followed_id: p.user_id).size
-        is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: p.user_id).first
-
-        p.attributes.merge({
-                             is_current_user_like: arr_post_id_liked.include?(p.id),
-                             author_followed_count: followed_count,
-                             author_followers_count: followers_count,
-                             is_current_user_following: is_current_user_following,
-                           })
+      sub_post = nil
+      unless post.sub_posts_count.nil?
+        sub_post = Post.joins(:user).select(@select_string).where(posts: { parent_id: post.id }).last
       end
 
-    else
-      posts = posts.map do |pt|
-        pt.attributes.except("pin_status", 'who_can_comment', 'by')
+      hash = {
+        author_followed_count: user.followings.size,
+        author_followers_count: user.followers.size,
+        sub_post: sub_post
+      }
+
+      if current_user
+        is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: post.user_id).first
+        hash['is_current_user_like'] = arr_post_id_liked.include?(post.id)
+        hash['is_current_user_following'] = is_current_user_following.present?
       end
+
+      post = hash.merge(post.as_json)
+      post.delete('by')
+      post.delete('who_can_comment')
+      post.delete('pin_status')
+      # [:by, :pin_status, :who_can_comment].each { |k| p.delete(k) }
+      post
+
     end
 
     render json: {
-      posts: posts
+      posts: posts,
     }
 
     # rescue ActiveRecord::NoMethodError => e
@@ -56,33 +64,31 @@ class PostsController < ApplicationController
 
   # GET /posts/1 or /posts/1.json
   def show
-    # comments = Comment.where(post_id: params[:id])
     author = User.select(:name, :username, :avatar_url, :id).find(@post.user_id)
+
+    response = {
+      author: author.as_json.merge({ followed_count: author.followings.size, followers_count: author.followers.size }),
+      comments_count: @post.sub_posts.size,
+      is_current_user_can_comment: true,
+    }
+
+    unless @post.parent_id.nil?
+      parent_post = Post.joins(:user).select(@select_string).where(posts: { id: @post.parent_id }).first
+      response['parent_post'] = parent_post
+    end
 
     if current_user
       like = Like.where(user_id: current_user.id, post_id: @post.id)
-
-      response = {
-        author: author,
-        comments_count: @post.sub_posts.size,
-        is_current_user_like: like.present?,
-        is_current_user_can_comment: true,
-      }
+      response['is_current_user_like'] = like.present?
 
       if Post.who_can_comments[@post.who_can_comment] == Post.who_can_comments[:followed] && @post.user_id != current_user.id
         follow = Follow.where(follower_id: @post.user_id, followed_id: current_user.id)
         response['is_current_user_can_comment'] = follow.present?
       end
-
-      render json: {
-        post: @post.attributes.merge(response),
-        status: @post.who_can_comment == Post.who_can_comments[:followed]
-      }
-      return
     end
 
     render json: {
-      post: @post.attributes.merge({ author: author, comments_count: @post.sub_posts.size }),
+      post: @post.as_json.merge(response)
     }
   end
 
@@ -143,13 +149,17 @@ class PostsController < ApplicationController
 
   private
 
-  # Use callbacks to share common setup or constraints between actions.
-
   def set_post
     @post = Post.find(params[:id])
   end
 
-  # Only allow a list of trusted parameters through.
+  def set_select_string
+    @select_string = "
+          users.username as author_username, users.name as author_name, users.avatar_url as author_avatar_url, users.bio as author_bio,
+          posts.*, posts.pin_status as pin_status_int, posts.who_can_comment as who_can_comment_int
+        "
+  end
+
   def post_params
     params.fetch(:post, {}).permit(:content, :image_url, :who_can_comment, :pin_status, :hashtags, :parent_id)
   end
