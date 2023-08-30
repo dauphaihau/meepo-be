@@ -29,6 +29,8 @@ class SearchController < ApplicationController
                       .filter_content_include_user(params[:q])
                       .group("posts.id, likes.id, users.id")
                       .order('likes_count desc')
+                      # .page(params[:page])
+                      # .page(2)
                       .uniq
           # .page(params[:page]).per(params[:limit])
 
@@ -47,25 +49,26 @@ class SearchController < ApplicationController
                       .order('created_at DESC')
                       .filter_content_include_user(params[:q])
                       .order('created_at DESC')
-                      .page(1).per(10)
-          # .page(params[:page]).per(params[:limit])
+                      .page(params[:page]).per(params[:limit])
+
         when filters[:people]
-          users = User.filter_by_username_name(params[:q]).page(1).per(10)
+          users = User.filter_by_username_name(params[:q])
+                      .page(params[:page])
+                      .per(params[:limit])
 
         when filters[:media]
           posts = Post.joins(:user)
                       .select(select_string)
                       .filter_content_include_user(params[:q])
                       .where.not(image_url: nil)
-                      .page(1).per(10)
-          # .page(params[:page]).per(params[:limit])
+                      .page(params[:page]).per(params[:limit])
         else
           p 'else'
         end
 
         followed_ids = []
-        if current_user
-          followed_ids = Follow.where(follower_id: current_user.id, followed_id: users.map(&:id)).pluck :followed_id if current_user
+        if current_user && users
+          followed_ids = Follow.where(follower_id: current_user.id, followed_id: users.map(&:id)).pluck :followed_id
         end
 
         if users && users.length > 0

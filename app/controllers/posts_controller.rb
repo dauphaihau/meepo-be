@@ -6,8 +6,6 @@ class PostsController < ApplicationController
 
   # GET /posts or /posts.json
   def index
-    # users.id as author_user_id
-
     posts = Post
               .joins(:user)
               .select(@select_string)
@@ -17,37 +15,71 @@ class PostsController < ApplicationController
               .page(params[:page]).per(params[:limit])
 
     arr_post_id_liked = []
-    if current_user
+
+    if current_user && params[:by].to_i != Post.bies[:comments]
       arr_post_id_liked = Like
                             .where(post_id: posts.map(&:id), user_id: current_user.id)
                             .pluck(:post_id)
     end
 
     posts = posts.map do |post|
-      user = User.find(post.user_id)
-
+      hash_sub_post = {}
       sub_post = nil
-      unless post.sub_posts_count.nil?
-        sub_post = Post.joins(:user).select(@select_string).where(posts: { parent_id: post.id }).last
+
+      # case filter by comments
+      if params[:by].to_i == Post.bies[:comments]
+        parent_post = Post.joins(:user).select(@select_string).where(posts: { id: post.parent_id }).first
+        if parent_post.present?
+          sub_post = post
+          post = parent_post
+        end
       end
 
-      hash = {
+      user = User.find(post.user_id)
+
+      response = {
         author_followed_count: user.followings.size,
         author_followers_count: user.followers.size,
-        sub_post: sub_post
       }
+
+      unless post.sub_posts_count.nil?
+        sub_post = Post.joins(:user).select(@select_string).where(posts: { parent_id: post.id }).last
+        if sub_post.present?
+          user_sub_post = User.find(sub_post.user_id)
+          hash_sub_post['author_followed_count'] = user_sub_post.followings.size
+          hash_sub_post['author_followers_count'] = user_sub_post.followers.size
+        end
+      end
 
       if current_user
         is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: post.user_id).first
-        hash['is_current_user_like'] = arr_post_id_liked.include?(post.id)
-        hash['is_current_user_following'] = is_current_user_following.present?
+
+        if params[:by].to_i == Post.bies[:comments]
+          like = Like.where(post_id: post.id, user_id: current_user.id).first
+          response['is_current_user_like'] = like.present?
+        else
+          response['is_current_user_like'] = arr_post_id_liked.include?(post.id)
+        end
+
+        response['is_current_user_following'] = is_current_user_following.present?
+
+        if sub_post.present?
+          follow = Follow.where(follower_id: current_user.id, followed_id: sub_post.user_id).first
+          like = Like.where(post_id: sub_post.id, user_id: current_user.id).first
+
+          hash_sub_post['is_current_user_following'] = follow.present?
+          hash_sub_post['is_current_user_like'] = like.present?
+        end
       end
 
-      post = hash.merge(post.as_json)
+      response['sub_post'] = sub_post.as_json.merge(hash_sub_post) if sub_post.present?
+      post = response.merge(post.as_json)
       post.delete('by')
       post.delete('who_can_comment')
       post.delete('pin_status')
-      # [:by, :pin_status, :who_can_comment].each { |k| p.delete(k) }
+      # [:by, :pin_status, :who_can_comment].each { |k| post.delete(k) }
+      # post.except(:by, :pin_status, :who_can_comment)
+      # post.without(:by, :pin_status, :who_can_comment)
       post
 
     end
