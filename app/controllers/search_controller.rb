@@ -4,7 +4,7 @@ class SearchController < ApplicationController
     users = []
     posts_trending = []
     select_string = "
-      users.username as author_username, users.name as author_name, users.avatar_url as author_avatar,
+      users.username as author_username, users.name as author_name, users.avatar_url as author_avatar_url,
       posts.*, posts.pin_status as pin_status_int, posts.who_can_comment as who_can_comment_int
     "
     filters = { top: 0, latest: 1, people: 2, media: 3 }.with_indifferent_access

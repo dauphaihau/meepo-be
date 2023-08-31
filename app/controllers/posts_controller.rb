@@ -24,6 +24,7 @@ class PostsController < ApplicationController
 
     posts = posts.map do |post|
       hash_sub_post = {}
+      response = {}
       sub_post = nil
 
       # case filter by comments
@@ -33,23 +34,20 @@ class PostsController < ApplicationController
           sub_post = post
           post = parent_post
         end
+      else
+        unless post.sub_posts_count.nil?
+          sub_post = Post.joins(:user).select(@select_string).where(posts: { parent_id: post.id }).last
+          if sub_post.present?
+            user_sub_post = User.find(sub_post.user_id)
+            hash_sub_post['author_followed_count'] = user_sub_post.followings.size
+            hash_sub_post['author_followers_count'] = user_sub_post.followers.size
+          end
+        end
       end
 
       user = User.find(post.user_id)
-
-      response = {
-        author_followed_count: user.followings.size,
-        author_followers_count: user.followers.size,
-      }
-
-      unless post.sub_posts_count.nil?
-        sub_post = Post.joins(:user).select(@select_string).where(posts: { parent_id: post.id }).last
-        if sub_post.present?
-          user_sub_post = User.find(sub_post.user_id)
-          hash_sub_post['author_followed_count'] = user_sub_post.followings.size
-          hash_sub_post['author_followers_count'] = user_sub_post.followers.size
-        end
-      end
+      response['author_followed_count'] = user.followings.size
+      response['author_followers_count'] = user.followers.size
 
       if current_user
         is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: post.user_id).first
