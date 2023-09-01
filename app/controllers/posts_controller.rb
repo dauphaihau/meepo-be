@@ -37,21 +37,10 @@ class PostsController < ApplicationController
       else
         unless post.sub_posts_count.nil?
           sub_post = Post.joins(:user).select(@select_string).where(posts: { parent_id: post.id }).last
-          if sub_post.present?
-            user_sub_post = User.find(sub_post.user_id)
-            hash_sub_post['author_followed_count'] = user_sub_post.followings.size
-            hash_sub_post['author_followers_count'] = user_sub_post.followers.size
-          end
         end
       end
 
-      user = User.find(post.user_id)
-      response['author_followed_count'] = user.followings.size
-      response['author_followers_count'] = user.followers.size
-
       if current_user
-        is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: post.user_id).first
-
         if params[:by].to_i == Post.bies[:comments]
           like = Like.where(post_id: post.id, user_id: current_user.id).first
           response['is_current_user_like'] = like.present?
@@ -59,13 +48,8 @@ class PostsController < ApplicationController
           response['is_current_user_like'] = arr_post_id_liked.include?(post.id)
         end
 
-        response['is_current_user_following'] = is_current_user_following.present?
-
         if sub_post.present?
-          follow = Follow.where(follower_id: current_user.id, followed_id: sub_post.user_id).first
           like = Like.where(post_id: sub_post.id, user_id: current_user.id).first
-
-          hash_sub_post['is_current_user_following'] = follow.present?
           hash_sub_post['is_current_user_like'] = like.present?
         end
       end

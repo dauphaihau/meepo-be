@@ -73,10 +73,7 @@ class SearchController < ApplicationController
 
         if users && users.length > 0
           users = users.map do |user|
-            hash = {
-              followed_count: user.followings.size,
-              followers_count: user.followers.size
-            }
+            hash = {}
             hash['is_current_user_following'] = followed_ids.include?(user.id) if current_user
             user = hash.merge(user.as_json)
             user.delete('by')
@@ -94,15 +91,16 @@ class SearchController < ApplicationController
 
           posts = posts.map do |post|
             user = User.find(post.user_id)
-            hash = {
-              author_followed_count: user.followings.size,
-              author_followers_count: user.followers.size,
-            }
+            hash = {}
+            # hash = {
+            #   author_followed_count: user.followings.size,
+            #   author_followers_count: user.followers.size,
+            # }
 
             if current_user
-              is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: post.user_id).first
+              # is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: post.user_id).first
               hash['is_current_user_like'] = arr_post_id_liked.include?(post.id)
-              hash['is_current_user_following'] = is_current_user_following.present?
+              # hash['is_current_user_following'] = is_current_user_following.present?
             end
 
             post = post.as_json.merge(hash)

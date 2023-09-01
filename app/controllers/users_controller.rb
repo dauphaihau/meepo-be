@@ -12,10 +12,7 @@ class UsersController < ApplicationController
     by = params[:by].to_i
 
     users = users.map do |user|
-      hash = {
-        followed_count: user.followings.size,
-        followers_count: user.followers.size
-      }
+      hash = {}
       if current_user && (User.bies[:followers_by_username] == by || User.bies[:following_by_username] == by)
         followed_ids = Follow.where(follower_id: current_user.id, followed_id: users.map(&:id)).pluck :followed_id
         hash['is_current_user_following'] = followed_ids.include?(user.id)
