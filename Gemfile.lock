@@ -111,6 +111,7 @@ GEM
     erubi (1.12.0)
     globalid (1.1.0)
       activesupport (>= 5.0)
+    hiredis (0.6.3)
     i18n (1.14.1)
       concurrent-ruby (~> 1.0)
     importmap-rails (1.2.1)
@@ -270,6 +271,7 @@ DEPENDENCIES
   debug
   devise (~> 4.9)
   devise-jwt (~> 0.9.0)
+  hiredis
   importmap-rails
   jbuilder
   jwt
