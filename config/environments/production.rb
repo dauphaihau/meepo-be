@@ -43,10 +43,10 @@ Rails.application.configure do
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
-  config.web_socket_server_url = "wss://meepo-app.onrender.com/cable"
-  config.action_cable.url = "wss://meepo-app.onrender.com/cable"
+  config.web_socket_server_url = "wss://meepo-app-dev.onrender.com/cable"
+  config.action_cable.url = "wss://meepo-app-dev.onrender.com/cable"
   config.action_cable.mount_path = '/cable'
-  config.action_cable.allowed_request_origins = ['https://meepo-app.onrender.com']
+  config.action_cable.allowed_request_origins = ['http://meepo-app-dev.com', /http:\/\/meepo-app-dev.*/, 'https://meepo-app-dev.com', /https:\/\/meepo-app-dev.*/]
   config.action_cable.disable_request_forgery_protection = true
   # config.force_ssl = true
 
@@ -65,7 +65,7 @@ Rails.application.configure do
   # config.active_job.queue_name_prefix = "rails_postgresql_render_production"
 
   config.action_mailer.perform_caching = true
-  config.cache_store = :redis_cache_store, {  url: ENV['REDIS_URL']}
+  config.cache_store = :redis_cache_store, { url: ENV['REDIS_URL'] }
 
   # Ignore bad email addresses and do not raise email delivery errors.
   # Set this to true and configure the email server for immediate delivery to raise delivery errors.
