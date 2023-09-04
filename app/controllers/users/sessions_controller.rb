@@ -5,9 +5,11 @@ class Users::SessionsController < Devise::SessionsController
   private
 
   def respond_with(_resource, _opts = {})
+
+    rooms_private_count = Participant.where(user_id: current_user.id).size
     render json: {
       message: 'You are logged in.',
-      user: current_user
+      user: current_user.as_json.merge({ rooms_private_count: rooms_private_count })
     }, status: :ok
   end
 

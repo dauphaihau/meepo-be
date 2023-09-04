@@ -7,6 +7,8 @@ class User < ApplicationRecord
          jwt_revocation_strategy: JwtDenylist
 
   has_many :posts, foreign_key: 'user_id', dependent: :destroy
+  has_many :participants
+  has_many :messages, dependent: :destroy
 
   has_many :followed_users, class_name: 'Follow', foreign_key: 'follower_id', dependent: :destroy, inverse_of: :follower
   has_many :followings, through: :followed_users, source: :followed

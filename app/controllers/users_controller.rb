@@ -70,9 +70,14 @@ class UsersController < ApplicationController
   def me
     user = get_user_from_token
 
+    rooms_private_count = 0
+    if user
+      rooms_private_count = Participant.where(user_id: current_user.id).size
+    end
+
     render json: {
       message: "If u see this, you're in!",
-      user: user
+      user: user.as_json.merge({ rooms_private_count: rooms_private_count })
     }
   end
 
