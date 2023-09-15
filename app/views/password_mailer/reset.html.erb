@@ -1,0 +1,8 @@
+<h1>Meepo</h1>
+<p>Hi <%= @user.name %>,</p>
+<p>We've received a request to reset the password for the Meepo account asscociated with @<%= @user.username %>,
+  use the confirmation code below to complete the process.
+</p>
+<p style="font-weight: bold"><%= @token %></p>
+<p>If you didn't request a password reset, you can ignore this email.</p>
+<p>--- Meepo Team</p>

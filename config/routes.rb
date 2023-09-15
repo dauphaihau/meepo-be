@@ -5,11 +5,15 @@ Rails.application.routes.draw do
              controllers: {
                sessions: 'users/sessions',
                registrations: 'users/registrations',
+               # password_resets: 'users/password_resets',
              }
   resources :users
   get '/me', to: 'users#me'
   post '/users/:id/follow', to: "users#follow", as: "follow_user"
   post '/users/:id/unfollow', to: "users#unfollow", as: "unfollow_user"
+  post '/users/password/reset', to: "password_resets#create"
+  patch '/users/password/reset', to: "password_resets#edit"
+  put '/users/password/reset', to: "password_resets#update"
 
   resources :posts
   resources :hashtags

@@ -43,10 +43,10 @@ Rails.application.configure do
 
   # Mount Action Cable outside main process or domain.
   # config.action_cable.mount_path = nil
-  config.web_socket_server_url = "wss://meepo-app-dev.onrender.com/cable"
-  config.action_cable.url = "wss://meepo-app-dev.onrender.com/cable"
+  config.web_socket_server_url = "wss://#{ENV['DOMAIN_APP']}/cable"
+  config.action_cable.url = "wss://#{ENV['DOMAIN_APP']}/cable"
   config.action_cable.mount_path = '/cable'
-  config.action_cable.allowed_request_origins = ['http://meepo-app-dev.com', /http:\/\/meepo-app-dev.*/, 'https://meepo-app-dev.com', /https:\/\/meepo-app-dev.*/]
+  config.action_cable.allowed_request_origins = ["http://#{ENV['DOMAIN_APP']}", /http:\/\/meepo-app-dev.*/, "https://#{ENV['DOMAIN_APP']}", /https:\/\/meepo-app-dev.*/]
   config.action_cable.disable_request_forgery_protection = true
   # config.force_ssl = true
 
@@ -93,4 +93,21 @@ Rails.application.configure do
 
   # Do not dump schema after migrations.
   config.active_record.dump_schema_after_migration = false
+
+  # Configure mailer
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { :host => ENV['DOMAIN_APP'] }
+  config.action_mailer.default_options = { from: ENV['GMAIL_USERNAME'] }
+  config.action_mailer.default :charset => "utf-8"
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.gmail.com',
+    port: 587,
+    domain: ENV['DOMAIN_APP'],
+    user_name: ENV['GMAIL_USERNAME'],
+    password: ENV['GMAIL_PASSWORD'],
+    authentication: 'plain',
+    enable_starttls_auto: true
+  }
 end
