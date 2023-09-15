@@ -21,7 +21,8 @@ Devise.setup do |config|
     jwt.dispatch_requests = [
       ['POST', %r{^/users/sign_in$}],
       ['POST', %r{^/users$}],
-      ['GET', %r{^/$}]
+      # ['PUT', %r{^/users/password/reset$}],
+      # ['GET', %r{^/$}]
     ]
     jwt.request_formats = { user: [:json] }
     jwt.expiration_time = 8.hours.to_i
