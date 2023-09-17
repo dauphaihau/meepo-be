@@ -24,21 +24,30 @@ Rails.application.configure do
   config.action_cable.allowed_request_origins = [/http:\/\/.*/, /https:\/\/.*/]
 
   config.action_controller.perform_caching = true
-  config.cache_store = :redis_cache_store, {  url: 'redis://localhost:6379/1'}
-  # config.cache_store = :redis_cache_store, {  url: ENV['REDIS_URL']}
-  # config.cache_store = :redis_cache_store, {  url: 'redis://red-cjotr25he99c738m019g:6379'}
+  config.cache_store = :redis_cache_store, { url: 'redis://localhost:6379/1' }
 
   # Uncomment if you wish to allow Action Cable access from any origin.
   # config.action_cable.disable_request_forgery_protection = true
 
-
   # Store uploaded files on the local file system (see config/storage.yml for options).
   config.active_storage.service = :local
 
-  # Don't care if the mailer can't send.
-  config.action_mailer.raise_delivery_errors = false
-
-  config.action_mailer.perform_caching = false
+  # Configure mailer
+  config.action_mailer.delivery_method = :smtp
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.raise_delivery_errors = true
+  config.action_mailer.default_url_options = { :host => 'localhost:3000' }
+  config.action_mailer.default_options = { from: Rails.application.credentials.gmail[:user_name] }
+  config.action_mailer.default :charset => "utf-8"
+  config.action_mailer.smtp_settings = {
+    address: 'smtp.gmail.com',
+    port: 587,
+    domain: 'localhost:3000',
+    user_name: Rails.application.credentials.gmail[:user_name],
+    password: Rails.application.credentials.gmail[:password],
+    authentication: 'plain',
+    enable_starttls_auto: true
+  }
 
   # Print deprecation notices to the Rails logger.
   config.active_support.deprecation = :log
@@ -63,5 +72,4 @@ Rails.application.configure do
 
   # Annotate rendered view with file names.
   # config.action_view.annotate_rendered_view_with_filenames = true
-
 end
