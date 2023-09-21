@@ -6,8 +6,9 @@
   <component name="ChangeListManager">
     <list default="true" id="45f3c57a-c745-4738-b79f-aaffd8866291" name="Changes" comment="remove duplicate instance of Rack::Cors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/mailers/password_mailer.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/mailers/password_mailer.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test/mailers/password_mailer_test.rb" beforeDir="false" afterPath="$PROJECT_DIR$/test/mailers/password_mailer_test.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/posts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/posts_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/post.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/post.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -457,6 +458,10 @@
       <workItem from="1694749088854" duration="10857000" />
       <workItem from="1694838824271" duration="2383000" />
       <workItem from="1694925006676" duration="1205000" />
+      <workItem from="1695098219651" duration="14255000" />
+      <workItem from="1695181386647" duration="7092000" />
+      <workItem from="1695216274384" duration="3100000" />
+      <workItem from="1695267378768" duration="3875000" />
     </task>
     <task id="LOCAL-00001" summary="remove duplicate instance of Rack::Cors">
       <created>1691680474767</created>
@@ -503,7 +508,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>177</line>
+          <line>214</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
@@ -535,7 +540,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>42</line>
+          <line>43</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
@@ -543,11 +548,19 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/models/post.rb</url>
-          <line>31</line>
+          <line>34</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
           <option name="timeStamp" value="16" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
+          <line>174</line>
+          <properties myBlockOrdinal="-1">
+            <option name="block-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="17" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
