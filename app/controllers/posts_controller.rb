@@ -83,6 +83,7 @@ class PostsController < ApplicationController
       author: author.as_json.merge({ followed_count: author.followings.size, followers_count: author.followers.size }),
       comments_count: @post.sub_posts.size,
       is_current_user_can_comment: true,
+      who_can_comment_int: Post.who_can_comments[@post.who_can_comment],
     }
 
     unless @post.parent_id.nil?
@@ -101,8 +102,13 @@ class PostsController < ApplicationController
       end
     end
 
+    post = @post.as_json.merge(response)
+    post.delete('by')
+    post.delete('who_can_comment')
+    post.delete('pin_status')
     render json: {
-      post: @post.as_json.merge(response)
+      # post: @post.as_json.merge(response)
+      post: post
     }
   end
 

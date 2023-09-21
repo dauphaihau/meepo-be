@@ -7,8 +7,6 @@
     <list default="true" id="45f3c57a-c745-4738-b79f-aaffd8866291" name="Changes" comment="remove duplicate instance of Rack::Cors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controllers/posts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/posts_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/post.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/post.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/db/schema.rb" beforeDir="false" afterPath="$PROJECT_DIR$/db/schema.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -461,7 +459,7 @@
       <workItem from="1695098219651" duration="14255000" />
       <workItem from="1695181386647" duration="7092000" />
       <workItem from="1695216274384" duration="3100000" />
-      <workItem from="1695267378768" duration="3875000" />
+      <workItem from="1695267378768" duration="5847000" />
     </task>
     <task id="LOCAL-00001" summary="remove duplicate instance of Rack::Cors">
       <created>1691680474767</created>
@@ -508,7 +506,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>214</line>
+          <line>220</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
@@ -524,7 +522,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>134</line>
+          <line>140</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
@@ -532,7 +530,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>120</line>
+          <line>126</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
@@ -556,7 +554,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>174</line>
+          <line>180</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
