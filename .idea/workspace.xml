@@ -6,7 +6,11 @@
   <component name="ChangeListManager">
     <list default="true" id="45f3c57a-c745-4738-b79f-aaffd8866291" name="Changes" comment="remove duplicate instance of Rack::Cors">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/posts_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/posts_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controllers/messages_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/messages_controller.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/like.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/like.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/message.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/message.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/participant.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/participant.rb" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/models/room.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/room.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -459,7 +463,13 @@
       <workItem from="1695098219651" duration="14255000" />
       <workItem from="1695181386647" duration="7092000" />
       <workItem from="1695216274384" duration="3100000" />
-      <workItem from="1695267378768" duration="5847000" />
+      <workItem from="1695267378768" duration="9965000" />
+      <workItem from="1695359467790" duration="1298000" />
+      <workItem from="1695390940717" duration="600000" />
+      <workItem from="1695438111848" duration="1881000" />
+      <workItem from="1695529112060" duration="624000" />
+      <workItem from="1695566350386" duration="678000" />
+      <workItem from="1695613483175" duration="6683000" />
     </task>
     <task id="LOCAL-00001" summary="remove duplicate instance of Rack::Cors">
       <created>1691680474767</created>
@@ -559,6 +569,14 @@
             <option name="block-ordinal" value="-1" />
           </properties>
           <option name="timeStamp" value="17" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="ruby-line">
+          <url>file://$PROJECT_DIR$/app/controllers/messages_controller.rb</url>
+          <line>10</line>
+          <properties myBlockOrdinal="-1">
+            <option name="block-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="18" />
         </line-breakpoint>
       </breakpoints>
     </breakpoint-manager>
