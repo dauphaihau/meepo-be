@@ -1,7 +1,7 @@
 class PostsController < ApplicationController
   before_action :set_post, only: %i[ show edit update destroy ]
   before_action :set_select_string, only: %i[ show index ]
-  before_action :authenticate_user!, except: [:index, :show]
+  before_action :authenticate_user!, except: [:index, :show, :update, :destroy]
   respond_to :json
 
   # GET /posts or /posts.json
@@ -11,6 +11,7 @@ class PostsController < ApplicationController
               .select(@select_string)
               .filter_by(params[:by], params[:user_id], params[:username], current_user)
               .filter_by_parent_id(params[:parent_id], params[:by])
+              .where(posts: { edited_parent_id: params[:edited_parent_id] || nil })
               .order_by(params[:by], params[:pin_status])
               .page(params[:page]).per(params[:limit])
 
@@ -42,15 +43,13 @@ class PostsController < ApplicationController
 
       if current_user
         if params[:by].to_i == Post.bies[:comments]
-          like = Like.where(post_id: post.id, user_id: current_user.id).first
-          response['is_current_user_like'] = like.present?
+          response['is_current_user_like'] = is_current_user_like(post.id)
         else
           response['is_current_user_like'] = arr_post_id_liked.include?(post.id)
         end
 
         if sub_post.present?
-          like = Like.where(post_id: sub_post.id, user_id: current_user.id).first
-          hash_sub_post['is_current_user_like'] = like.present?
+          hash_sub_post['is_current_user_like'] = is_current_user_like(sub_post.id)
         end
       end
 
@@ -84,16 +83,18 @@ class PostsController < ApplicationController
       author: author.as_json.merge({ followed_count: author.followings.size, followers_count: author.followers.size }),
       comments_count: @post.sub_posts.size,
       is_current_user_can_comment: true,
+      who_can_comment_int: Post.who_can_comments[@post.who_can_comment],
     }
 
     unless @post.parent_id.nil?
       parent_post = Post.joins(:user).select(@select_string).where(posts: { id: @post.parent_id }).first
-      response['parent_post'] = parent_post
+      if parent_post.present?
+        response['parent_post'] = parent_post.as_json.merge({ is_current_user_like: is_current_user_like(parent_post.id) })
+      end
     end
 
     if current_user
-      like = Like.where(user_id: current_user.id, post_id: @post.id)
-      response['is_current_user_like'] = like.present?
+      response['is_current_user_like'] = is_current_user_like(@post.id)
 
       if Post.who_can_comments[@post.who_can_comment] == Post.who_can_comments[:followed] && @post.user_id != current_user.id
         follow = Follow.where(follower_id: @post.user_id, followed_id: current_user.id)
@@ -101,19 +102,24 @@ class PostsController < ApplicationController
       end
     end
 
+    post = @post.as_json.merge(response)
+    post.delete('by')
+    post.delete('who_can_comment')
+    post.delete('pin_status')
     render json: {
-      post: @post.as_json.merge(response)
+      # post: @post.as_json.merge(response)
+      post: post
     }
   end
 
   # GET /posts/new
-  def new
-    @post = Post.new
-  end
+  # def new
+  #   @post = Post.new
+  # end
 
-  # GET /posts/1/edit
-  def edit
-  end
+  # PATCH /posts/1/edit
+  # def edit
+  # end
 
   # POST /posts or /posts.json
   def create
@@ -135,21 +141,49 @@ class PostsController < ApplicationController
         ActionCable.server.broadcast('PostsChannel', { post: parent_post })
       end
 
-      render json: new_post, status: :created
+      render json: {
+        post: new_post
+      }, status: :created
     else
       render json: new_post.errors, status: :unprocessable_entity
     end
   end
 
-  # PATCH/PUT /posts/1 or /posts/1.json
+  # PUT /posts/1 or /posts/1.json
   def update
     if @post.user_id != current_user.id
       render json: {}, status: :forbidden
       return
     end
 
-    if @post.update(post_params)
-      render json: @post, status: :ok
+    if post_params.as_json.length == 1 && post_params.as_json.key?('pin_status')
+      if @post.update(post_params)
+        render json: { post: @post }, status: :ok
+      else
+        render json: @post.errors, status: :unprocessable_entity
+      end
+      return
+    end
+
+    if Time.now.utc > @post.created_at.utc + 1.hour
+      render json: { message: 'Expires edit' }, status: :forbidden
+      return
+    end
+
+    if @post.edited_posts_count == 5
+      render json: { message: 'Reached max edit post' }, status: :forbidden
+      return
+    end
+
+    previous_post = @post.as_json
+    previous_post.delete('id')
+    previous_post['edited_parent_id'] = @post.id
+    previous_post = current_user.posts.create(previous_post)
+
+    if previous_post.save && @post.update(post_params.merge({ created_at: Time.now }))
+      render json: {
+        post: @post
+      }, status: :ok
     else
       render json: @post.errors, status: :unprocessable_entity
     end
@@ -172,6 +206,15 @@ class PostsController < ApplicationController
           users.username as author_username, users.name as author_name, users.avatar_url as author_avatar_url, users.bio as author_bio,
           posts.*, posts.pin_status as pin_status_int, posts.who_can_comment as who_can_comment_int
         "
+  end
+
+  def is_current_user_like(post_id)
+    if current_user
+      like = Like.where(user_id: current_user.id, post_id: post_id)
+      like.present?
+    else
+      false
+    end
   end
 
   def post_params

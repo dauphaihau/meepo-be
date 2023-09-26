@@ -7,7 +7,6 @@ class Room < ApplicationRecord
   scope :private_rooms, -> { where(is_private: true) }
 
   # after_create_commit {broadcast_append_to "rooms"}
-
   after_create_commit { broadcast_if_public }
 
   def broadcast_if_public

@@ -11,7 +11,7 @@ class MessagesController < ApplicationController
                  .where(room_id: arr_room_id)
                  .select('DISTINCT ON (room_id) room_id, messages.user_id, messages.id, messages.created_at, messages.text,
  users.name as participant_name, users.username as participant_username, users.avatar_url as participant_avatar_url')
-                 .order(:room_id)
+                 .order('room_id, created_at DESC')
                  .sort_by(&:created_at)
                  .reverse
 

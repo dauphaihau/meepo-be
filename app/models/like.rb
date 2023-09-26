@@ -1,6 +1,7 @@
 class Like < ApplicationRecord
   after_create_commit { broadcast_message }
   belongs_to :post, counter_cache: true
+  validates_presence_of :post_id
 
   private
 

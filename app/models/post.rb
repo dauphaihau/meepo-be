@@ -5,6 +5,10 @@ class Post < ApplicationRecord
 
   has_many :sub_posts, dependent: :destroy, class_name: 'Post', foreign_key: 'parent_id', inverse_of: :parent
   belongs_to :parent, optional: true, class_name: 'Post', inverse_of: :sub_posts, counter_cache: :sub_posts_count
+
+  has_many :edited_posts, dependent: :destroy, class_name: 'Post', foreign_key: 'edited_parent_id', inverse_of: :edited_parent
+  belongs_to :edited_parent, optional: true, class_name: 'Post', inverse_of: :edited_posts, counter_cache: :edited_posts_count
+
   scope :top_level, -> { where(parent_id: nil) }
   paginates_per 10
 
@@ -23,7 +27,6 @@ class Post < ApplicationRecord
   }
 
   scope :filter_by, -> (by, user_id, username, current_user) {
-
     case by.to_i
     when Post.bies[:comments]
       return p 'user_id is nil at case comments' if user_id.nil?

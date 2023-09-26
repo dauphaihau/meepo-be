@@ -3,6 +3,8 @@ class Message < ApplicationRecord
   belongs_to :user
   belongs_to :room
 
+  validates_presence_of :text
+
   # before_create :confirm_participant
 
   # def confirm_participant
