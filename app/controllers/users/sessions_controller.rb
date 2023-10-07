@@ -9,7 +9,12 @@ class Users::SessionsController < Devise::SessionsController
     rooms_private_count = Participant.where(user_id: current_user.id).size
     render json: {
       message: 'You are logged in.',
-      user: current_user.as_json.merge({ rooms_private_count: rooms_private_count })
+      user: current_user.as_json.merge({
+                                         rooms_private_count: rooms_private_count,
+                                         followed_count: current_user.followings.size,
+                                         followers_count: current_user.followers.size,
+                                       })
+
     }, status: :ok
   end
 
