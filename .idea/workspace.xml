@@ -5,12 +5,7 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="45f3c57a-c745-4738-b79f-aaffd8866291" name="Changes" comment="remove duplicate instance of Rack::Cors">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controllers/messages_controller.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/controllers/messages_controller.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/like.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/like.rb" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models/message.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/message.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/participant.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/participant.rb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/models/room.rb" beforeDir="false" afterPath="$PROJECT_DIR$/app/models/room.rb" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,6 +29,9 @@
       </map>
     </option>
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="HighlightingSettingsPerFile">
+    <setting file="file://$APPLICATION_HOME_DIR$/plugins/ruby/rubysigs/rubysigs30/core/array.rbs" root0="SKIP_INSPECTION" />
   </component>
   <component name="MarkdownSettingsMigration">
     <option name="stateVersion" value="1" />
@@ -470,6 +468,10 @@
       <workItem from="1695529112060" duration="624000" />
       <workItem from="1695566350386" duration="678000" />
       <workItem from="1695613483175" duration="6683000" />
+      <workItem from="1696510553721" duration="1073000" />
+      <workItem from="1696567931803" duration="1842000" />
+      <workItem from="1696602481589" duration="2952000" />
+      <workItem from="1696780932562" duration="752000" />
     </task>
     <task id="LOCAL-00001" summary="remove duplicate instance of Rack::Cors">
       <created>1691680474767</created>
@@ -516,7 +518,7 @@
       <breakpoints>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>220</line>
+          <line>228</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
@@ -532,7 +534,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>140</line>
+          <line>139</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
@@ -540,7 +542,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>126</line>
+          <line>125</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
@@ -548,7 +550,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>43</line>
+          <line>45</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>
@@ -564,7 +566,7 @@
         </line-breakpoint>
         <line-breakpoint enabled="true" type="ruby-line">
           <url>file://$PROJECT_DIR$/app/controllers/posts_controller.rb</url>
-          <line>180</line>
+          <line>179</line>
           <properties myBlockOrdinal="-1">
             <option name="block-ordinal" value="-1" />
           </properties>

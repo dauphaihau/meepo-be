@@ -25,7 +25,9 @@ class PostsController < ApplicationController
 
     posts = posts.map do |post|
       hash_sub_post = {}
-      response = {}
+      response = {
+        is_current_user_can_comment: true
+      }
       sub_post = nil
 
       # case filter by comments
@@ -42,6 +44,8 @@ class PostsController < ApplicationController
       end
 
       if current_user
+        response['is_current_user_can_comment'] = is_current_user_can_comment(post)
+
         if params[:by].to_i == Post.bies[:comments]
           response['is_current_user_like'] = is_current_user_like(post.id)
         else
@@ -82,7 +86,6 @@ class PostsController < ApplicationController
     response = {
       author: author.as_json.merge({ followed_count: author.followings.size, followers_count: author.followers.size }),
       comments_count: @post.sub_posts.size,
-      is_current_user_can_comment: true,
       who_can_comment_int: Post.who_can_comments[@post.who_can_comment],
     }
 
@@ -95,11 +98,7 @@ class PostsController < ApplicationController
 
     if current_user
       response['is_current_user_like'] = is_current_user_like(@post.id)
-
-      if Post.who_can_comments[@post.who_can_comment] == Post.who_can_comments[:followed] && @post.user_id != current_user.id
-        follow = Follow.where(follower_id: @post.user_id, followed_id: current_user.id)
-        response['is_current_user_can_comment'] = follow.present?
-      end
+      response['is_current_user_can_comment'] = is_current_user_can_comment(@post)
     end
 
     post = @post.as_json.merge(response)
@@ -214,6 +213,15 @@ class PostsController < ApplicationController
       like.present?
     else
       false
+    end
+  end
+
+  def is_current_user_can_comment(post)
+    if Post.who_can_comments[post.who_can_comment] == Post.who_can_comments[:followed] && post.user_id != current_user.id
+      follow = Follow.where(follower_id: post.user_id, followed_id: current_user.id)
+      follow.present?
+    else
+      true
     end
   end
 

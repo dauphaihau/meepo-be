@@ -20,6 +20,6 @@ class Message < ApplicationRecord
     current_user = User.find(user_id)
     username = current_user.username
     user_id = current_user.id
-    ActionCable.server.broadcast('MessagesChannel', { id: id, text: text, username: username, user_id: user_id })
+    ActionCable.server.broadcast('MessagesChannel', { id: id, text: text, username: username, user_id: user_id, created_at: created_at })
   end
 end
