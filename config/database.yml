@@ -6,6 +6,7 @@ default: &default
 development:
   <<: *default
   database: meepo-local
+#  url: <%= ENV['DATABASE_URL'] %>
 
 
 #test:

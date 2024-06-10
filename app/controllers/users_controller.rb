@@ -4,9 +4,15 @@ class UsersController < ApplicationController
   respond_to :json
 
   def index
+    total_users = User.limit_by(params[:by])
+                      .select(:id, :username, :name, :avatar_url, :bio)
+                      .filter_by_follow(current_user, params[:by], params[:username])
+                      .count
+
     users = User.limit_by(params[:by])
                 .select(:id, :username, :name, :avatar_url, :bio)
                 .filter_by_follow(current_user, params[:by], params[:username])
+                .page(params[:page]).per(params[:limit])
     # .filter_by_username_name(params[:q])
 
     by = params[:by].to_i
@@ -22,11 +28,12 @@ class UsersController < ApplicationController
       user
     end
 
-    response = { users: users }
+    response = {
+      users: users,
+      total_users: total_users
+    }
 
-    if params[:include] === 'user'
-      response['by_user'] = User.find_by_username(params[:username])
-    end
+    response['by_user'] = User.find_by_username(params[:username]) if params[:include] == 'user'
 
     render json: response
   end
@@ -43,6 +50,9 @@ class UsersController < ApplicationController
       is_current_user_following = Follow.where(follower_id: current_user.id, followed_id: @user.id).first
       hash['is_current_user_following'] = !is_current_user_following.nil?
     end
+
+    Rails.logger.info 'userrrr'
+    puts @user.inspect
 
     user = hash.merge(@user.as_json)
     render json: { user: user }, status: :ok
@@ -70,14 +80,12 @@ class UsersController < ApplicationController
   def me
     user = get_user_from_token
 
-    rooms_private_count = 0
-    if user
-      rooms_private_count = Participant.where(user_id: current_user.id).size
-    end
+    last_message_count = 0
+    last_message_count = Participant.where(user_id: current_user.id).size if user
 
     render json: {
       message: "If u see this, you're in!",
-      user: user.as_json.merge({ rooms_private_count: rooms_private_count })
+      user: user.as_json.merge({ last_message_count: last_message_count })
     }
   end
 
@@ -89,11 +97,9 @@ class UsersController < ApplicationController
 
   def set_user
     begin
-      select_string = 'id, name, username, avatar_url, dob, bio, website, location, posts_count'
+      select_string = 'id, name, username, avatar_url, dob, bio, website, location, posts_count, created_at'
       @user = User.select(select_string).find_by username: params[:id]
-      if @user.nil?
-        @user = User.select(select_string).find params[:id]
-      end
+      @user = User.select(select_string).find params[:id] if @user.nil?
 
     rescue ActiveRecord::RecordNotFound
       render json: {

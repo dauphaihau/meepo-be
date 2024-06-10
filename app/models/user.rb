@@ -31,7 +31,7 @@ class User < ApplicationRecord
       if current_user
         current_user_followed = Follow.where(follower_id: current_user.id).pluck(:followed_id)
         current_user_followed.push(current_user.id)
-        where.not(id: current_user_followed).order("random()")
+        where.not(id: current_user_followed).order('random()')
       else
         puts 'current_user is nil'
       end
@@ -45,7 +45,7 @@ class User < ApplicationRecord
 
     else
       # undefine case
-      all.limit(10).order("random()")
+      all.limit(10).order('random()')
     end
   }
 
@@ -55,7 +55,7 @@ class User < ApplicationRecord
 
   validate do
     if @not_valid_by
-      errors.add(:by, "Not valid user by, please select from the list: ")
+      errors.add(:by, 'Not valid user by, please select from the list: ')
     end
   end
 

@@ -9,11 +9,11 @@ Rails.application.routes.draw do
              }
   resources :users
   get '/me', to: 'users#me'
-  post '/users/:id/follow', to: "users#follow", as: "follow_user"
-  post '/users/:id/unfollow', to: "users#unfollow", as: "unfollow_user"
-  post '/users/password/reset', to: "password_resets#create"
-  patch '/users/password/reset', to: "password_resets#edit"
-  put '/users/password/reset', to: "password_resets#update"
+  post '/users/:id/follow', to: 'users#follow', as: 'follow_user'
+  post '/users/:id/unfollow', to: 'users#unfollow', as: 'unfollow_user'
+  post '/users/password/reset', to: 'password_resets#create'
+  patch '/users/password/reset', to: 'password_resets#edit'
+  put '/users/password/reset', to: 'password_resets#update'
 
   resources :posts
   resources :hashtags
@@ -22,5 +22,9 @@ Rails.application.routes.draw do
   resources :search, only: [:index]
 
   resources :rooms, only: [:show]
-  resources :messages, only: [:create, :index]
+  # resources :messages, only: %i[create index]
+  get '/messages', to: 'messages#index'
+  get '/messages/last', to: 'messages#last_messages'
+  post '/messages', to: 'messages#create'
+  # resources :messages, only: [:create, :index]
 end
