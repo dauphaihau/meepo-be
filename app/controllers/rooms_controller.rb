@@ -5,6 +5,7 @@ class RoomsController < ApplicationController
     user = User.find_by_username(params[:id])
     room_name = Room.get_name(user, current_user)
     room = Room.where(name: room_name).first
+
     if room
       messages = room.messages.order('created_at ASC')
       render json: {

@@ -2,7 +2,8 @@ class SearchController < ApplicationController
   def index
     posts = []
     users = []
-    posts_trending = []
+    total_users = 0
+    total_posts = 0
     select_string = "
       users.username as author_username, users.name as author_name, users.avatar_url as author_avatar_url,
       posts.*, posts.pin_status as pin_status_int, posts.who_can_comment as who_can_comment_int
@@ -13,50 +14,54 @@ class SearchController < ApplicationController
 
       if params[:f]
         current_f = filters[params[:f]]
+        limit_user = 3
+
         case current_f
         when filters[:top]
           users = User.joins(:followers)
                       .select('follows.*, users.*')
                       .where('users.username LIKE ? OR users.name LIKE ?', "%#{params[:q]}%", "%#{params[:q]}%")
-                      .group("users.id, follows.id")
+                      .group('users.id, follows.id')
                       .order('COUNT(users.id) DESC')
                       .uniq
           # .limit(3)
-          users = users.slice(0, 3)
+          users = users.slice(0, limit_user)
 
-          posts = Post.joins(:likes, :user)
+          total_posts = Post.joins(:user)
+                            .filter_content_include_user(params[:q])
+                            .count
+
+          posts = Post.joins(:user)
                       .select(select_string)
                       .filter_content_include_user(params[:q])
-                      .group("posts.id, likes.id, users.id")
-                      .order('likes_count desc')
-                      # .page(params[:page])
-                      # .page(2)
-                      .uniq
-          # .page(params[:page]).per(params[:limit])
-
-          # posts = Post.joins(:user)
-          #             .select(select_string)
-          #             .filter_content_include_user(params[:q])
-          #             .group("posts.id, users.id")
-          #             .order('likes_count desc')
-          #             .uniq
-          # .page(params[:page]).per(params[:limit])
+                      .order('likes_count DESC')
+                      .page(params[:page])
+                      .per(params[:limit])
 
         when filters[:latest]
+          total_posts = Post.joins(:user)
+                            .filter_content_include_user(params[:q])
+                            .count
 
           posts = Post.joins(:user)
                       .select(select_string)
                       .order('created_at DESC')
                       .filter_content_include_user(params[:q])
                       .order('created_at DESC')
-                      .page(params[:page]).per(params[:limit])
+                      .page(params[:page])
+                      .per(params[:limit])
 
         when filters[:people]
+          total_users = User.filter_by_username_name(params[:q]).count
           users = User.filter_by_username_name(params[:q])
                       .page(params[:page])
                       .per(params[:limit])
 
         when filters[:media]
+          total_posts = Post.joins(:user)
+                            .filter_content_include_user(params[:q])
+                            .where.not(image_url: nil)
+                            .count
           posts = Post.joins(:user)
                       .select(select_string)
                       .filter_content_include_user(params[:q])
@@ -68,7 +73,9 @@ class SearchController < ApplicationController
 
         followed_ids = []
         if current_user && users
-          followed_ids = Follow.where(follower_id: current_user.id, followed_id: users.map(&:id)).pluck :followed_id
+          followed_ids = Follow
+                         .where(follower_id: current_user.id, followed_id: users.map(&:id))
+                         .pluck :followed_id
         end
 
         if users && users.length > 0
@@ -85,8 +92,8 @@ class SearchController < ApplicationController
           arr_post_id_liked = []
           if current_user
             arr_post_id_liked = Like
-                                  .where(post_id: posts.map(&:id), user_id: current_user.id)
-                                  .pluck(:post_id)
+                                .where(post_id: posts.map(&:id), user_id: current_user.id)
+                                .pluck(:post_id)
           end
 
           posts = posts.map do |post|
@@ -116,22 +123,13 @@ class SearchController < ApplicationController
         users = User.filter_by_username_name(params[:q]).order(created_at: :desc).limit(10)
       end
 
-    else
-      # hashtags = Hashtag.select([:text]).group(:text).having("count(text) > 1").all.size
-      # hashtags_sorted = hashtags.sort_by(&:last).reverse[0, 5]
-      #
-      # hashtags_sorted.each do |p|
-      #   hashtag = p[0]
-      #   posts_trending << Post.filter_by_content(hashtag).order(created_at: :desc).first
-      # end
     end
 
     render json: {
       posts: posts,
       users: users,
-      # hashtags: hashtags,
-      # hashtags_sorted: hashtags_sorted,
-      # posts_trending: posts_trending,
+      total_users: total_users,
+      total_posts: total_posts,
     }
   end
 
