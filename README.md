@@ -1,24 +1,42 @@
-# README
+# Meepo
+Meepo is a free social networking site where people converse with each other in short messages
 
-This README would normally document whatever steps are necessary to get the
-application up and running.
+<a href="https://meepo-app.onrender.com">Try it now</a>
 
-Things you may want to cover:
+## Tech stack
+- [Ruby on Rails](https://www.typescriptlang.org/) - Full-stack Framework
+- [PostgreSQL](https://www.postgresql.org/) - Relational Database
+- [Redis](https://redis.io/) - In-memory data structure store, use to cache data
 
-* Ruby version
+## Installation Guide
+> **Note**
+> Requirements: [Ruby](https://www.ruby-lang.org/en/) >= 3.0.0
 
-* System dependencies
+1. **Clone the GitHub repository**
+```bash
+https://github.com/dauphaihau/meepo-be.git
+```
 
-* Configuration
+2. **Configure Database**
 
-* Database creation
+   set your database url into config/database.yml
 
-* Database initialization
 
-* How to run the test suite
+3. **Configure Cache store**
 
-* Services (job queues, cache servers, search engines, etc.)
+   set your redis url into config/cable.yml
 
-* Deployment instructions
 
-* ...
+4. **Install gems**
+```bash
+bundle install
+```
+
+5. **Runs migrations**
+```bash
+rails db:migrate
+```
+6. **Launches a web server**
+```bash
+rails s
+```
