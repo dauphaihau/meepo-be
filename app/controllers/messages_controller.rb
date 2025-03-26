@@ -68,13 +68,12 @@ users.name as participant_name, users.username as participant_username, users.av
     if params[:room_id].nil? && username_user_to_message
       user = User.find_by_username(username_user_to_message)
       if user
-        # private_room = Room.create_private_room([user, current_user])
-        private_room = Room.create_private_room([current_user, user])
+        private_room = Room.create_private_room([user, current_user])
         p "private room #{private_room}"
-        message = current_user.messages.create!({ room_id: private_room.id, text: params[:text] })
+        message = current_user.messages.create({ room_id: private_room.id, text: params[:text] })
       end
     else
-      message = current_user.messages.create!(message_params)
+      message = current_user.messages.create(message_params)
     end
 
     if message
